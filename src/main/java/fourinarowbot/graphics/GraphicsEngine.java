@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import fourinarowbot.FourInARowApplication;
 import fourinarowbot.board.Board;
 import fourinarowbot.domain.Marker;
-import fourinarowbot.gameengine.MyN00bGameEngine;
+import fourinarowbot.gameengine.HaxBot;
 
 public class GraphicsEngine extends JApplet {
 
@@ -34,7 +34,7 @@ public class GraphicsEngine extends JApplet {
     }
 
     public static void main(final String[] args) {
-        final FourInARowApplication fourInARowApplication = new FourInARowApplication(new MyN00bGameEngine());
+        final FourInARowApplication fourInARowApplication = new FourInARowApplication(new HaxBot());
         fourInARowApplication.runGameOnce();
     }
 }
