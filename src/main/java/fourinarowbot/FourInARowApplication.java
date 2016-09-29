@@ -5,7 +5,7 @@ import fourinarowbot.domain.Coordinates;
 import fourinarowbot.domain.Marker;
 import fourinarowbot.domain.MarkerColor;
 import fourinarowbot.gameengine.GameEngine;
-import fourinarowbot.gameengine.HaxBot;
+import fourinarowbot.gameengine.ScoreBot;
 import fourinarowbot.graphics.GraphicsEngine;
 
 public class FourInARowApplication {
@@ -19,7 +19,7 @@ public class FourInARowApplication {
 
     public FourInARowApplication(final GameEngine redGameEngine) {
         this.redGameEngine = redGameEngine;
-        this.yellowGameEngine = new HaxBot();
+        this.yellowGameEngine = new ScoreBot();
         this.board = new BoardImpl();
         this.boardSearcher = new BoardSearcher(board);
         this.graphicsEngine = new GraphicsEngine(board);
@@ -28,7 +28,7 @@ public class FourInARowApplication {
 
     public FourInARowApplication(final GameEngine redGameEngine, final boolean graphicsEnabled) {
         this.redGameEngine = redGameEngine;
-        this.yellowGameEngine = new HaxBot();
+        this.yellowGameEngine = new ScoreBot();
         //        this.yellowGameEngine = new ClosestGameEngine(MarkerColor.YELLOW);
         this.board = new BoardImpl();
         this.boardSearcher = new BoardSearcher(board);
@@ -143,7 +143,7 @@ public class FourInARowApplication {
 
     public static void main(final String[] args) throws InterruptedException {
         Logger.setDebugLogOn(false);
-        final FourInARowApplication application = new FourInARowApplication(new HaxBot());
+        final FourInARowApplication application = new FourInARowApplication(new ScoreBot());
         //        application.runGameOnce();
         application.runGameMultipleGames(100);
     }

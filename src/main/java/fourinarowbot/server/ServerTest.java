@@ -3,7 +3,7 @@ package fourinarowbot.server;
 import fourinarowbot.board.BoardImpl;
 import fourinarowbot.domain.Coordinates;
 import fourinarowbot.domain.MarkerColor;
-import fourinarowbot.gameengine.HaxBot;
+import fourinarowbot.gameengine.ScoreBot;
 import fourinarowbot.server.response.ServerResponse;
 
 public class ServerTest {
@@ -14,18 +14,18 @@ public class ServerTest {
 
         new Thread(() -> {
             String                 playerName   = "Player1";
-            final HaxBot playerEngine = new HaxBot();
+            final ScoreBot playerEngine = new ScoreBot();
             startPlaying(server, gameName, playerName, playerEngine);
         }).start();
 
         new Thread(() -> {
             String                 playerName   = "Player2";
-            final HaxBot playerEngine = new HaxBot();
+            final ScoreBot playerEngine = new ScoreBot();
             startPlaying(server, gameName, playerName, playerEngine);
         }).start();
     }
 
-    private static void startPlaying(final ServerRestController server, final String gameName, final String playerName, final HaxBot playerEngine) {
+    private static void startPlaying(final ServerRestController server, final String gameName, final String playerName, final ScoreBot playerEngine) {
         String message = null;
         while (true) {
             //            System.out.println(playerName + " getting board state...");
