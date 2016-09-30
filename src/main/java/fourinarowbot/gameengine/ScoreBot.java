@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Properties;
 
-public class MyN00bGameEngine implements GameEngine {
+public class ScoreBot implements GameEngine {
     private PriorityQueue<Priordinates> nextMoveQueue = new PriorityQueue<>();
     private MarkerColor winningColor;
     private Board board;
@@ -142,7 +142,7 @@ public class MyN00bGameEngine implements GameEngine {
 
     // Run this main to start the game
     public static void main(final String[] args) {
-        final FourInARowApplication fourInARowApplication = new FourInARowApplication(new MyN00bGameEngine(), true);
+        final FourInARowApplication fourInARowApplication = new FourInARowApplication(new ScoreBot()), true);
 
         // Run game once
         fourInARowApplication.runGameOnce();
