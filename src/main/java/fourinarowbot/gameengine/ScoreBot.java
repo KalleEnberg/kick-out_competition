@@ -6,34 +6,41 @@ import fourinarowbot.domain.Coordinates;
 import fourinarowbot.domain.MarkerColor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class ScoreBot implements GameEngine {
-    private PriorityQueue<Priordinates> nextMoveQueue = new PriorityQueue<>();
+    private PriorityQueue<Priordinates> nextMoveQueue = new PriorityQueue<Priordinates>(10, new Comparator<Priordinates>() {
+        @Override
+        public int compare(Priordinates first,Priordinates second){
+            return first.getPriority().compareTo(second.getPriority());
+        }
+    });
     private MarkerColor winningColor;
     private Board board;
     @Override
     public Coordinates getCoordinatesForNextMakerToPlace(final Board board, final MarkerColor myColor) {
         ArrayList<Priordinates> availableSpots = new ArrayList<>();
-        for(int columnIndex = 0; columnIndex<board.getNumberOfCols()-1; columnIndex++){
-            for(int rowIndex = board.getNumberOfRows()-1; rowIndex>0; rowIndex--){
+        for(int columnIndex = 0; columnIndex<board.getNumberOfCols(); columnIndex++){
+            for(int rowIndex = board.getNumberOfRows()-1; rowIndex>-1; rowIndex--){
                 if(!board.isAnyMarkerAt(columnIndex,rowIndex)){
                     availableSpots.add(new Priordinates(columnIndex,rowIndex));
                 }
             }
         }
-        //TODO: some kind of priority system with neighbour checking methods (if neighbour has neighbour in same direction etc... = priority HIGH) then pop a priorityQueue.
-        //TODO: test tomorrow with spring!
-        this.winningColor = myColor;
+        winningColor = myColor;
         this.board = board;
-        availableSpots.stream().filter(this::isSpotPlaceable).forEach(this::queueSpot);
-        Priordinates spot1 = availableSpots.get(0);
-        spot1.setPriority(10);
-        Priordinates spot2 = availableSpots.get(availableSpots.size()-1);
-        spot1.setPriority(11);
-        nextMoveQueue.add(spot1);
-        nextMoveQueue.add(spot2);
+        availableSpots.stream().filter(this::isSpotPlaceable).collect(Collectors.toList()).forEach(this::queueSpot);
+        return getBestPlayableSpot(nextMoveQueue);
+    }
+
+    private Coordinates getBestPlayableSpot(final PriorityQueue<Priordinates> nextMoveQueue) {
+        while(board.isAnyMarkerAt(nextMoveQueue.peek().getX(),nextMoveQueue.peek().getY())){
+            nextMoveQueue.poll();
+        }
         return nextMoveQueue.poll();
     }
 
@@ -60,19 +67,19 @@ public class ScoreBot implements GameEngine {
         int prio = 0;
         for(int upperNeighbours = 1; upperNeighbours<4; upperNeighbours++) {
             if (!board.isOutsideBoard(spotX - upperNeighbours, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX - upperNeighbours, spotY - upperNeighbours) && board.getMarker(spotX - upperNeighbours, spotY - upperNeighbours).getColor().equals(winningColor)) {
-                prio += 3 * upperNeighbours;
+                prio += 25 * upperNeighbours;
             } else if (!board.isOutsideBoard(spotX - upperNeighbours, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX - upperNeighbours, spotY - upperNeighbours)) {
-                prio += 2 * upperNeighbours;
+                prio += 20 * upperNeighbours;
             }
-            // TODO: 2016-09-29 Maybe deprioritize markers close to edge
+            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
         }
         for(int lowerNeighbours = 1; lowerNeighbours<4; lowerNeighbours++) {
             if (!board.isOutsideBoard(spotX + lowerNeighbours, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX + lowerNeighbours, spotY + lowerNeighbours) && board.getMarker(spotX + lowerNeighbours, spotY + lowerNeighbours).getColor().equals(winningColor)) {
-                prio += 3 * lowerNeighbours;
+                prio += 25 * lowerNeighbours;
             } else if (!board.isOutsideBoard(spotX + lowerNeighbours, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX + lowerNeighbours, spotY + lowerNeighbours)) {
-                prio += 2 * lowerNeighbours;
+                prio += 20 * lowerNeighbours;
             }
-            // TODO: 2016-09-29 Maybe deprioritize markers close to edge
+            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
         }
         return prio;
     }
@@ -81,19 +88,19 @@ public class ScoreBot implements GameEngine {
         int prio = 0;
         for(int upperNeighbours = 1; upperNeighbours<4; upperNeighbours++) {
             if (!board.isOutsideBoard(spotX + upperNeighbours, spotY - upperNeighbours)  && board.isAnyMarkerAt(spotX + upperNeighbours, spotY - upperNeighbours) && board.getMarker(spotX + upperNeighbours, spotY - upperNeighbours).getColor().equals(winningColor)) {
-                prio += 3 * upperNeighbours;
+                prio += 25 * upperNeighbours;
             } else if (!board.isOutsideBoard(spotX + upperNeighbours, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX + upperNeighbours, spotY - upperNeighbours)) {
-                prio += 2 * upperNeighbours;
+                prio += 20 * upperNeighbours;
             }
-            // TODO: 2016-09-29 Maybe deprioritize markers close to edge
+            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
         }
         for(int lowerNeighbours = 1; lowerNeighbours<4; lowerNeighbours++) {
             if (!board.isOutsideBoard(spotX - lowerNeighbours, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX - lowerNeighbours, spotY + lowerNeighbours) && board.getMarker(spotX - lowerNeighbours, spotY + lowerNeighbours).getColor().equals(winningColor)) {
-                prio += 3 * lowerNeighbours;
+                prio += 25 * lowerNeighbours;
             } else if (!board.isOutsideBoard(spotX - lowerNeighbours, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX - lowerNeighbours, spotY + lowerNeighbours)) {
-                prio += 2 * lowerNeighbours;
+                prio += 20 * lowerNeighbours;
             }
-            // TODO: 2016-09-29 Maybe deprioritize markers close to edge
+            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
         }
         return prio;
     }
@@ -102,19 +109,19 @@ public class ScoreBot implements GameEngine {
         int prio = 0;
         for(int upperNeighbours = 1; upperNeighbours<4; upperNeighbours++) {
             if (!board.isOutsideBoard(spotX, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX, spotY - upperNeighbours) && board.getMarker(spotX, spotY - upperNeighbours).getColor().equals(winningColor)) {
-                prio += 3 * upperNeighbours;
+                prio += 25 * upperNeighbours;
             } else if (!board.isOutsideBoard(spotX, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX, spotY - upperNeighbours)) {
-                prio += 2 * upperNeighbours;
+                prio += 20 * upperNeighbours;
             }
-            // TODO: 2016-09-29 Maybe deprioritize markers close to edge
+            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
         }
         for(int lowerNeighbours = 1; lowerNeighbours<4; lowerNeighbours++) {
             if (!board.isOutsideBoard(spotX, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX, spotY + lowerNeighbours) && board.getMarker(spotX, spotY + lowerNeighbours).getColor().equals(winningColor)) {
-                prio += 3 * lowerNeighbours;
+                prio += 25 * lowerNeighbours;
             } else if (!board.isOutsideBoard(spotX, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX, spotY + lowerNeighbours)) {
-                prio += 2 * lowerNeighbours;
+                prio += 20 * lowerNeighbours;
             }
-            // TODO: 2016-09-29 Maybe deprioritize markers close to edge
+            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
         }
         return prio;
     }
@@ -123,32 +130,32 @@ public class ScoreBot implements GameEngine {
         int prio = 0;
         for(int leftNeighbours = 1; leftNeighbours<4; leftNeighbours++) {
             if (!board.isOutsideBoard(spotX - leftNeighbours, spotY) && board.isAnyMarkerAt(spotX - leftNeighbours, spotY) && board.getMarker(spotX - leftNeighbours, spotY).getColor().equals(winningColor)) {
-                prio += 3 * leftNeighbours;
+                prio += 25 * leftNeighbours;
             } else if (!board.isOutsideBoard(spotX - leftNeighbours, spotY) && board.isAnyMarkerAt(spotX - leftNeighbours, spotY)) {
-                prio += 2 * leftNeighbours;
+                prio += 20 * leftNeighbours;
             }
-            // TODO: 2016-09-29 Maybe deprioritize markers close to edge
+            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
         }
         for(int rightNeighbours = 1; rightNeighbours<4; rightNeighbours++) {
             if (!board.isOutsideBoard(spotX + rightNeighbours, spotY) && board.isAnyMarkerAt(spotX + rightNeighbours, spotY) && board.getMarker(spotX + rightNeighbours, spotY).getColor().equals(winningColor)) {
-                prio += 3 * rightNeighbours;
+                prio += 25 * rightNeighbours;
             } else if (!board.isOutsideBoard(spotX + rightNeighbours, spotY) && board.isAnyMarkerAt(spotX + rightNeighbours, spotY)) {
-                prio += 2 * rightNeighbours;
+                prio += 20 * rightNeighbours;
             }
-            // TODO: 2016-09-29 Maybe deprioritize markers close to edge
+            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
         }
         return prio;
     }
 
     // Run this main to start the game
     public static void main(final String[] args) {
-        final FourInARowApplication fourInARowApplication = new FourInARowApplication(new ScoreBot()), true);
+        final FourInARowApplication fourInARowApplication = new FourInARowApplication(new ScoreBot(), true);
 
         // Run game once
-        fourInARowApplication.runGameOnce();
+        //fourInARowApplication.runGameOnce();
 
         // Run game multiple times
-        //        fourInARowApplication.runGameMultipleGames(100);
+        fourInARowApplication.runGameMultipleGames(100);
     }
 
     private class Priordinates extends Coordinates {
@@ -156,14 +163,11 @@ public class ScoreBot implements GameEngine {
         private Priordinates(int x, int y){
             super(x,y);
         }
-        private int getPriority(){
-            return this.priority;
+        private Integer getPriority(){
+            return priority;
         }
         private void setPriority(int newpriority){
-            this.priority = newpriority;
-        }
-        public int compareTo(Priordinates other){
-            return priority.compareTo(other.getPriority());
+            priority = newpriority;
         }
     }
 }

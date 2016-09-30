@@ -6,8 +6,8 @@ import fourinarowbot.gameengine.ScoreBot;
 public class GameRunner {
 
     public static void main(final String[] args) {
-        final String     playerName   = "MrHeyhey";
-        final String     gameName     = "MyGame1";
+        final String     playerName   = "IGotThis";
+        final String     gameName     = "EpicGame";
         final GameEngine myGameEngine = new ScoreBot();
 
         RemoteGame.startGame(playerName, gameName, myGameEngine);
