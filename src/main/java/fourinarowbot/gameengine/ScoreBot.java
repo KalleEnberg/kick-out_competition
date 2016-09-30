@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Properties;
 
-public class ScoreBot implements GameEngine {
+public class MyN00bGameEngine implements GameEngine {
     private PriorityQueue<Priordinates> nextMoveQueue = new PriorityQueue<>();
     private MarkerColor winningColor;
     private Board board;
@@ -27,7 +27,7 @@ public class ScoreBot implements GameEngine {
         //TODO: test tomorrow with spring!
         this.winningColor = myColor;
         this.board = board;
-        //availableSpots.forEach(this::queueSpot);
+        availableSpots.stream().filter(this::isSpotPlaceable).forEach(this::queueSpot);
         Priordinates spot1 = availableSpots.get(0);
         spot1.setPriority(10);
         Priordinates spot2 = availableSpots.get(availableSpots.size()-1);
@@ -35,6 +35,10 @@ public class ScoreBot implements GameEngine {
         nextMoveQueue.add(spot1);
         nextMoveQueue.add(spot2);
         return nextMoveQueue.poll();
+    }
+
+    private boolean isSpotPlaceable(final Priordinates spot){
+        return board.isOutsideBoard(spot.getX(),spot.getY()+1) || board.isAnyMarkerAt(spot.getX(),spot.getY()+1);
     }
 
     private void queueSpot(final Priordinates spot){
@@ -138,7 +142,7 @@ public class ScoreBot implements GameEngine {
 
     // Run this main to start the game
     public static void main(final String[] args) {
-        final FourInARowApplication fourInARowApplication = new FourInARowApplication(new ScoreBot(), true);
+        final FourInARowApplication fourInARowApplication = new FourInARowApplication(new MyN00bGameEngine(), true);
 
         // Run game once
         fourInARowApplication.runGameOnce();
