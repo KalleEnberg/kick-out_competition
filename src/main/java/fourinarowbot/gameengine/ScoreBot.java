@@ -65,84 +65,140 @@ public class ScoreBot implements GameEngine {
 
     private int getPrioFromDownstairDiagonal(int spotX, int spotY) {
         int prio = 0;
-        for(int upperNeighbours = 1; upperNeighbours<4; upperNeighbours++) {
-            if (!board.isOutsideBoard(spotX - upperNeighbours, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX - upperNeighbours, spotY - upperNeighbours) && board.getMarker(spotX - upperNeighbours, spotY - upperNeighbours).getColor().equals(winningColor)) {
-                prio += 25 * upperNeighbours;
-            } else if (!board.isOutsideBoard(spotX - upperNeighbours, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX - upperNeighbours, spotY - upperNeighbours)) {
-                prio += 20 * upperNeighbours;
-            }
-            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
-        }
-        for(int lowerNeighbours = 1; lowerNeighbours<4; lowerNeighbours++) {
+        prio += getPrioFromUpperNeighbours(spotX, spotY, prio);
+        prio += getPrioFromLowerNeighbours(spotX, spotY, prio);
+        return prio;
+    }
+
+    private int getPrioFromLowerNeighbours(final int spotX, final int spotY, int prio) {
+        for(int lowerNeighbours = 1; lowerNeighbours < 4; lowerNeighbours++) {
             if (!board.isOutsideBoard(spotX + lowerNeighbours, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX + lowerNeighbours, spotY + lowerNeighbours) && board.getMarker(spotX + lowerNeighbours, spotY + lowerNeighbours).getColor().equals(winningColor)) {
-                prio += 25 * lowerNeighbours;
+                prio += 4 * lowerNeighbours;
             } else if (!board.isOutsideBoard(spotX + lowerNeighbours, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX + lowerNeighbours, spotY + lowerNeighbours)) {
-                prio += 20 * lowerNeighbours;
+                prio += 3 * lowerNeighbours;
+            }else{
+                return prio;
             }
-            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
+            // TODO: 3016-09-39 Maybe deprioritize markers close to edge
+        }
+        return prio;
+    }
+
+    private int getPrioFromUpperNeighbours(final int spotX, final int spotY, int prio) {
+        for(int upperNeighbours = 1; upperNeighbours < 4; upperNeighbours++) {
+            if (!board.isOutsideBoard(spotX - upperNeighbours, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX - upperNeighbours, spotY - upperNeighbours) && board.getMarker(spotX - upperNeighbours, spotY - upperNeighbours).getColor().equals(winningColor)) {
+                prio += 4 * upperNeighbours;
+            } else if (!board.isOutsideBoard(spotX - upperNeighbours, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX - upperNeighbours, spotY - upperNeighbours)) {
+                prio += 3 * upperNeighbours;
+            }else{
+                return prio;
+            }
+            // TODO: 3016-09-39 Maybe deprioritize markers close to edge
         }
         return prio;
     }
 
     private int getPrioFromUpstairDiagonal(int spotX, int spotY) {
         int prio = 0;
-        for(int upperNeighbours = 1; upperNeighbours<4; upperNeighbours++) {
-            if (!board.isOutsideBoard(spotX + upperNeighbours, spotY - upperNeighbours)  && board.isAnyMarkerAt(spotX + upperNeighbours, spotY - upperNeighbours) && board.getMarker(spotX + upperNeighbours, spotY - upperNeighbours).getColor().equals(winningColor)) {
-                prio += 25 * upperNeighbours;
-            } else if (!board.isOutsideBoard(spotX + upperNeighbours, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX + upperNeighbours, spotY - upperNeighbours)) {
-                prio += 20 * upperNeighbours;
-            }
-            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
-        }
-        for(int lowerNeighbours = 1; lowerNeighbours<4; lowerNeighbours++) {
+        prio += getPrioFromUpperNeighboursUpstairDiagonal(spotX, spotY, prio);
+        prio += getPrioFromLowerNeighboursUpstairDiagonal(spotX, spotY, prio);
+        return prio;
+    }
+
+    private int getPrioFromLowerNeighboursUpstairDiagonal(final int spotX, final int spotY, int prio) {
+        for(int lowerNeighbours = 1; lowerNeighbours < 4; lowerNeighbours++) {
             if (!board.isOutsideBoard(spotX - lowerNeighbours, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX - lowerNeighbours, spotY + lowerNeighbours) && board.getMarker(spotX - lowerNeighbours, spotY + lowerNeighbours).getColor().equals(winningColor)) {
-                prio += 25 * lowerNeighbours;
+                prio += 4 * lowerNeighbours;
             } else if (!board.isOutsideBoard(spotX - lowerNeighbours, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX - lowerNeighbours, spotY + lowerNeighbours)) {
-                prio += 20 * lowerNeighbours;
+                prio += 3 * lowerNeighbours;
+            }else{
+                return prio;
             }
-            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
+            // TODO: 3016-09-39 Maybe deprioritize markers close to edge
+        }
+        return prio;
+    }
+
+    private int getPrioFromUpperNeighboursUpstairDiagonal(final int spotX, final int spotY, int prio) {
+        for(int upperNeighbours = 1; upperNeighbours < 4; upperNeighbours++) {
+            if (!board.isOutsideBoard(spotX + upperNeighbours, spotY - upperNeighbours)  && board.isAnyMarkerAt(spotX + upperNeighbours, spotY - upperNeighbours) && board.getMarker(spotX + upperNeighbours, spotY - upperNeighbours).getColor().equals(winningColor)) {
+                prio += 4 * upperNeighbours;
+            } else if (!board.isOutsideBoard(spotX + upperNeighbours, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX + upperNeighbours, spotY - upperNeighbours)) {
+                prio += 3 * upperNeighbours;
+            }else{
+                return prio;
+            }
+            // TODO: 3016-09-39 Maybe deprioritize markers close to edge
         }
         return prio;
     }
 
     private int getPrioFromVertical(int spotX, int spotY) {
         int prio = 0;
-        for(int upperNeighbours = 1; upperNeighbours<4; upperNeighbours++) {
-            if (!board.isOutsideBoard(spotX, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX, spotY - upperNeighbours) && board.getMarker(spotX, spotY - upperNeighbours).getColor().equals(winningColor)) {
-                prio += 25 * upperNeighbours;
-            } else if (!board.isOutsideBoard(spotX, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX, spotY - upperNeighbours)) {
-                prio += 20 * upperNeighbours;
-            }
-            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
-        }
-        for(int lowerNeighbours = 1; lowerNeighbours<4; lowerNeighbours++) {
+        prio += getPrioFromUpperNeighboursVertical(spotX, spotY, prio);
+        prio += getPrioFromLowerNeighboursVertical(spotX, spotY, prio);
+        return prio;
+    }
+
+    private int getPrioFromLowerNeighboursVertical(final int spotX, final int spotY, int prio) {
+        for(int lowerNeighbours = 1; lowerNeighbours < 4; lowerNeighbours++) {
             if (!board.isOutsideBoard(spotX, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX, spotY + lowerNeighbours) && board.getMarker(spotX, spotY + lowerNeighbours).getColor().equals(winningColor)) {
-                prio += 25 * lowerNeighbours;
+                prio += 4 * lowerNeighbours;
             } else if (!board.isOutsideBoard(spotX, spotY + lowerNeighbours) && board.isAnyMarkerAt(spotX, spotY + lowerNeighbours)) {
-                prio += 20 * lowerNeighbours;
+                prio += 3 * lowerNeighbours;
+            }else{
+                return prio;
             }
-            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
+            // TODO: 3016-09-39 Maybe deprioritize markers close to edge
+        }
+        return prio;
+    }
+
+    private int getPrioFromUpperNeighboursVertical(final int spotX, final int spotY, int prio) {
+        for(int upperNeighbours = 1; upperNeighbours < 4; upperNeighbours++) {
+            if (!board.isOutsideBoard(spotX, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX, spotY - upperNeighbours) && board.getMarker(spotX, spotY - upperNeighbours).getColor().equals(winningColor)) {
+                prio += 4 * upperNeighbours;
+            } else if (!board.isOutsideBoard(spotX, spotY - upperNeighbours) && board.isAnyMarkerAt(spotX, spotY - upperNeighbours)) {
+                prio += 3 * upperNeighbours;
+            }else{
+                return prio;
+            }
+            // TODO: 3016-09-39 Maybe deprioritize markers close to edge
         }
         return prio;
     }
 
     private int getPrioFromHorizontal(int spotX, int spotY) {
         int prio = 0;
-        for(int leftNeighbours = 1; leftNeighbours<4; leftNeighbours++) {
-            if (!board.isOutsideBoard(spotX - leftNeighbours, spotY) && board.isAnyMarkerAt(spotX - leftNeighbours, spotY) && board.getMarker(spotX - leftNeighbours, spotY).getColor().equals(winningColor)) {
-                prio += 25 * leftNeighbours;
-            } else if (!board.isOutsideBoard(spotX - leftNeighbours, spotY) && board.isAnyMarkerAt(spotX - leftNeighbours, spotY)) {
-                prio += 20 * leftNeighbours;
-            }
-            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
-        }
-        for(int rightNeighbours = 1; rightNeighbours<4; rightNeighbours++) {
+        prio += getPrioFromLeftNeighboursHorizontal(spotX, spotY, prio);
+        prio += getPrioFromRightNeighboursHorizontal(spotX, spotY, prio);
+        return prio;
+    }
+
+    private int getPrioFromRightNeighboursHorizontal(final int spotX, final int spotY, int prio) {
+        for(int rightNeighbours = 1; rightNeighbours < 4; rightNeighbours++) {
             if (!board.isOutsideBoard(spotX + rightNeighbours, spotY) && board.isAnyMarkerAt(spotX + rightNeighbours, spotY) && board.getMarker(spotX + rightNeighbours, spotY).getColor().equals(winningColor)) {
-                prio += 25 * rightNeighbours;
+                prio += 4 * rightNeighbours;
             } else if (!board.isOutsideBoard(spotX + rightNeighbours, spotY) && board.isAnyMarkerAt(spotX + rightNeighbours, spotY)) {
-                prio += 20 * rightNeighbours;
+                prio += 3 * rightNeighbours;
+            }else{
+                return prio;
             }
-            // TODO: 20016-09-209 Maybe deprioritize markers close to edge
+            // TODO: 3016-09-39 Maybe deprioritize markers close to edge
+        }
+        return prio;
+    }
+
+    private int getPrioFromLeftNeighboursHorizontal(final int spotX, final int spotY, int prio) {
+        for(int leftNeighbours = 1; leftNeighbours < 4; leftNeighbours++) {
+            if (!board.isOutsideBoard(spotX - leftNeighbours, spotY) && board.isAnyMarkerAt(spotX - leftNeighbours, spotY) && board.getMarker(spotX - leftNeighbours, spotY).getColor().equals(winningColor)) {
+                prio += 4 * leftNeighbours;
+            } else if (!board.isOutsideBoard(spotX - leftNeighbours, spotY) && board.isAnyMarkerAt(spotX - leftNeighbours, spotY)) {
+                prio += 3 * leftNeighbours;
+            }else{
+                return prio;
+            }
+            // TODO: 3016-09-39 Maybe deprioritize markers close to edge
         }
         return prio;
     }
@@ -152,10 +208,10 @@ public class ScoreBot implements GameEngine {
         final FourInARowApplication fourInARowApplication = new FourInARowApplication(new ScoreBot(), true);
 
         // Run game once
-        //fourInARowApplication.runGameOnce();
+        fourInARowApplication.runGameOnce();
 
         // Run game multiple times
-        fourInARowApplication.runGameMultipleGames(100);
+        //fourInARowApplication.runGameMultipleGames(100);
     }
 
     private class Priordinates extends Coordinates {
